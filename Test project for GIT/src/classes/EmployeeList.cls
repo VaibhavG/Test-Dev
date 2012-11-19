@@ -6,6 +6,7 @@ public with sharing class EmployeeList {
 		generateList();
 	}
 	
+	/* --------- testing for GIT -------- */
 	public void generateList(){
 		List<Contact> conList = new List<Contact>([Select c.User__c, c.Title, c.SystemModstamp, c.Status__c, c.Salutation, c.ReportsToId, c.Phone, c.OwnerId, c.OtherStreet, c.OtherState, c.OtherPostalCode, c.OtherPhone, c.OtherCountry, c.OtherCity, c.Name, c.MobilePhone, c.MasterRecordId, c.MailingStreet, c.MailingState, c.MailingPostalCode, c.MailingCountry, c.MailingCity, c.Level__c, c.LeadSource, c.LastName, c.LastModifiedDate, c.LastModifiedById, c.LastCUUpdateDate, c.LastCURequestDate, c.LastActivityDate, c.Languages__c, c.JigsawContactId, c.Jigsaw, c.IsDeleted, c.Id, c.HomePhone, c.FirstName, c.Fax, c.EmailBouncedReason, c.EmailBouncedDate, c.Email, c.Description, c.Department, c.CreatedDate, c.CreatedById, c.Birthdate, c.AssistantPhone, c.AssistantName, c.Approval_Status__c, c.AccountId From Contact c order by c.name asc limit 10]);
 		system.debug('===========conList========' +conList);
