@@ -1,0 +1,28 @@
+<apex:page Controller="EmployeeList">
+	<apex:form >
+		<apex:PageBlock >
+			<apex:pageBlockTable value="{!helperList}" var="l" frame="box" >
+				<apex:column width="15%">
+					<apex:facet name="header"> Name </apex:facet>
+					<apex:outputText value="{!l.empName}">
+					</apex:outputText>
+				</apex:column>
+				<apex:column width="15%">
+					<apex:facet name="header"> Job Title </apex:facet>
+					<apex:outputText value="{!l.jobTitle}">
+					</apex:outputText>
+				</apex:column>
+				<apex:column width="15%">
+					<apex:facet name="header"> Base Salary </apex:facet>
+					<apex:outputText value="{!l.baseSalary}">
+					</apex:outputText>
+				</apex:column>
+				<apex:column width="15%">
+					<apex:facet name="header"> Leave Taken </apex:facet>
+					<apex:outputText value="{!l.leaveTaken}">
+					</apex:outputText>
+				</apex:column>
+			</apex:pageBlockTable>	
+		</apex:PageBlock>
+	</apex:form>		
+</apex:page>

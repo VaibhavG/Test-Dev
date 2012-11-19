@@ -1,0 +1,199 @@
+<apex:page standardController="Product2" extensions="SkyEditorClass_ProductLookup1"   showHeader="false"   sidebar="false" >
+<head>
+<script type="text/javascript">
+	jQuery.noConflict();
+	/* Load時にInputにFocusさせない。 */
+	beenFocused = true;
+	
+	if (typeof SkyEditor === "undefined") {
+		SkyEditor = {};
+	}
+	SkyEditor.SessionId = "{!$Api.Session_ID}";
+	SkyEditor.CurrentPageName = "{!$CurrentPage.Name}";
+	SkyEditor.UserId = "{!$User.Id}";
+	SkyEditor.UserLanguage = "{!userLanguage}";
+	SkyEditor.namespace = "SkyVisualEditor";
+	SkyEditor.PageMode = "{!mode}";
+	SkyEditor.RecordId = "{!record.Id}";
+	SkyEditor.mainObject = "Product2";
+	SkyEditor.setProperty && SkyEditor.setProperty("labels.Picklist.none", "{!label.none}");
+	SkyEditor.canvasSetting = {};
+	SkyEditor.originCanvasSetting = {};
+	SkyEditor.penImages = {
+							'2':'{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/images/pen2.gif')}',
+							'3':'{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/images/pen3.gif')}',
+							'4':'{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/images/pen4.gif')}'
+						  };
+	SkyEditor.canvasFlag = {};
+	
+	SkyEditor.searchConditionFromTo="";
+	SkyEditor.searchConditionItem="";
+	
+</script>
+<style>
+.sveTabPanelHeaderStyle{ font-size:1em; }
+</style>
+
+
+</head>
+<apex:stylesheet value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/jquery-ui-1.8.19.custom.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/skyeditor2_tablesorter.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/skyeditor2_styles.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'json2.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/jquery-ui-1.8.19.custom.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/jquery.math.1.0.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/skyeditor2_core.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/jquery.tablesorter.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/addons/pager/jquery.tablesorter.pager.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/tableSortPageingSetting.js')}"/>
+<apex:includeScript value="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/js/jquery.bgiframe.min.js')}"/>
+<apex:includeScript value="/soap/ajax/24.0/connection.js"/>
+<apex:includeScript value="/soap/ajax/24.0/apex.js"/>
+<apex:outputPanel id="messagesPanel">
+	<apex:pageMessages id="sveErrMsgs" rendered="{!errorMessages == ''}"/>
+	<apex:pageMessage summary="{!errorMessages}" severity="error" strength="2" escape="false" rendered="{!errorMessages != ''}"/>
+	<apex:pageMessage summary="{!infoMessages}" severity="info" strength="2" escape="false" rendered="{!infoMessages != ''}"/>
+</apex:outputPanel>
+<apex:outputPanel rendered="{! NOT(hidePageBody)}" id="pagePanel" styleClass="base" layout="block">
+<apex:form >
+	<apex:pageBlock id="searchBlock" mode="detail">
+		<apex:pageBlockSection collapsible="true" columns="1" id="searchSection" title="{!customSearchSectionTitle}">
+			<apex:outputPanel >
+				<apex:panelGrid columns="2" cellpadding="3" style="font-size:12px;">
+<apex:outputPanel >
+	<apex:outputLabel id="searchSelect1_label" style="font-weight:bold;" value="{!$ObjectType.Product2.fields.Name.label}" />
+	&nbsp;
+	<apex:selectList value="{!searchSelect1.SkyVisualEditor__Text__c}" size="1" id="searchSelect1"  style="width:6em;text-align:center;">
+		<apex:selectOptions value="{!searchSelect1_options}" />
+		<apex:actionSupport event="onchange" action="{!searchSelect1_ChangeListener}" reRender="searchSelect2,dataTableSet1" />
+	</apex:selectList>
+</apex:outputPanel>
+<apex:outputPanel >
+	<apex:outputLabel id="searchSelect2_label" style="font-weight:bold;" value="{!$ObjectType.Product2.fields.ProductCode.label}" />
+	&nbsp;
+	<apex:selectList value="{!searchSelect2.SkyVisualEditor__Text__c}" size="1" id="searchSelect2"  style="width:6em;text-align:center;">
+		<apex:selectOptions value="{!searchSelect2_options}" />
+		<apex:actionSupport event="onchange" action="{!doSearch}" reRender="searchSelect2,dataTableSet1" />
+	</apex:selectList>
+</apex:outputPanel>
+				</apex:panelGrid>
+			</apex:outputPanel>
+			<apex:outputPanel >
+				<apex:panelGrid columns="2" cellpadding="3" style="font-size:12px;">
+<apex:outputPanel >
+	<apex:outputLabel id="inputField1_label" style="font-weight:bold;" value="{!$ObjectType.Product2.fields.Name.label}" />
+	&nbsp;
+	<apex:inputText value="{!inputField1.SkyVisualEditor__Text__c}" size="1" id="inputField1" style="width:107px;height:14px;color:#000000;font-size:1.0em;" />
+	<script>setOnLookupSearchKeyDown('{!$Component.inputField1}');</script>
+</apex:outputPanel>
+<apex:outputPanel >
+	<apex:outputLabel id="inputField2_label" style="font-weight:bold;" value="{!$ObjectType.Product2.fields.ProductCode.label}" />
+	&nbsp;
+	<apex:inputText value="{!inputField2.SkyVisualEditor__Text__c}" size="1" id="inputField2" style="width:107px;height:14px;color:#000000;font-size:1.0em;text-align:center;" />
+	<script>setOnLookupSearchKeyDown('{!$Component.inputField2}');</script>
+</apex:outputPanel>
+				</apex:panelGrid>
+			</apex:outputPanel>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+<apex:outputPanel id="pageBlock2_Wrapper" styleClass="">
+<apex:pageBlock id="pageBlock2"   mode="detail"   title=" "   >
+<apex:pageBlockButtons location="top"   >
+<apex:commandButton action="{!doSearch}"   id="searchButton1"   reRender="pageBlock2"   status="searchButton1_Status"   styleClass="btn"   value="Search Products"   style="color:#009900;font-weight:Bold;" /><apex:actionStatus id="searchButton1_Status">
+  <apex:facet name="start">
+    <apex:image url="/img/loading.gif" style="width:16px; height:16px; margin:auto; border:0; vertical-align:middle;" />
+  </apex:facet>
+</apex:actionStatus>
+<apex:commandButton id="selectRecordsButton1" value="{!label.SelectRecord}" onclick="selectLookupRecords(); return false;"  style="width:66px;" />
+</apex:pageBlockButtons><apex:outputPanel id="dataTableSet1"   layout="block"   styleClass="dataTableSet"   style="overflow:auto;" >
+	<apex:actionRegion >
+<script>SkyEditor.selectedRecords = {};</script>
+<table   id="dataTableSet1_header"  >
+<tr  >
+<td   style="vertical-align:bottom;"  >
+<div   id="pager4"   layout="block"  class="pager" style="margin-left:20px; text-align:center;">
+ <table cellpadding="0" cellspacing="0" border="0">
+ <tr>
+ <td>
+ <img src="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/addons/pager/icons/first.png')}" class="first"/>
+ </td>
+ <td> 
+ <img src="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/addons/pager/icons/prev.png')}" class="prev"/>
+ </td>
+ <td>
+ <input type="text" class="pagedisplay" readonly="readonly" />
+ </td>
+ <td>
+ <img src="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/addons/pager/icons/next.png')}" class="next"/>
+ </td>
+ <td>
+ <img src="{!URLFOR($Resource.SkyVisualEditor__skyEditor2, 'skyeditor2/2_4/css/addons/pager/icons/last.png')}" class="last"/>
+ </td>
+ <td>
+ <select class="pagesize">
+  <option value="5">5</option>
+  <option value="10">10</option>
+  <option value="25">25</option>
+  <option value="50">50</option>
+  <option value="100">100</option>
+ </select>
+ </td>
+ </tr>
+ </table>
+<script>
+	if (typeof LookupHoverDetail === 'function') {
+		LookupHoverDetail.prototype.show = function () {};
+	}
+</script>
+</div></td><td   style="vertical-align:bottom;"  >
+<apex:outputPanel style="margin-left:20px;"   >
+<apex:outputText value="{!rowCount}"   /><apex:outputText value="{!IF(dataTableSet1.items.size >=500, (rowCountPrefix & ' ' & TEXT(dataTableSet1.items.size) & ' ' & rowCountSuffix), (':' & TEXT(dataTableSet1.items.size)))}"   /></apex:outputPanel></td></tr></table><apex:outputPanel layout="block"   styleClass="tableWrapper"    >
+<apex:pageBlockTable columnsWidth="57px,244px,244px,244px,244px"   id="dataTableSet1_table"   rows="500"   value="{!dataTableSet1.items}"   var="item"   >
+<apex:column style="width:57px;" >
+<apex:facet name="header"   >
+<apex:outputPanel layout="inline"   style="width:30px;display:block;" >
+<apex:inputCheckbox onclick="applyChecked(event, this, 'dataTableSet1');"   value="{!dataTableSet1.selected}"   >
+</apex:inputCheckbox></apex:outputPanel></apex:facet><apex:inputCheckbox id="BulkSelectCheckbox" value="{!item.selected}" onclick="checkLookupRecord({'Id':'{!JSENCODE(item.record.Id)}','Name':'{!JSENCODE(item.record.Name)}'}, this.checked);" styleClass="BulkSelectCheckbox" />
+<script>checkLookupRecord({'Id':'{!JSENCODE(item.record.Id)}','Name':'{!JSENCODE(item.record.Name)}'}, {!item.selected})</script>
+</apex:column><apex:column id="column1"   style="color:#000000;text-align:center;vertical-align:middle;" rendered="{!$ObjectType.Product2.fields.Name.accessible}">
+<apex:outputPanel styleclass="fieldwrapper " style="color:#000000;font-size:1.0em;font-weight:Normal;" >
+<apex:outputField id="outputField1"     value="{!item.record.Name}" />
+</apex:outputPanel>
+<apex:facet name="header"   >
+<apex:outputPanel layout="inline"   style="text-align:center;display:block;" >
+<apex:outputText value="Product Name"   style="color:#000000;" /></apex:outputPanel></apex:facet></apex:column><apex:column id="column2"   style="color:#000000;text-align:center;vertical-align:middle;" rendered="{!$ObjectType.Product2.fields.ProductCode.accessible}">
+<apex:outputPanel styleclass="fieldwrapper " style="color:#000000;font-size:1.0em;font-weight:Normal;" >
+<apex:outputField id="outputField2"     value="{!item.record.ProductCode}" />
+</apex:outputPanel>
+<apex:facet name="header"   >
+<apex:outputPanel layout="inline"   style="text-align:center;display:block;" >
+<apex:outputText value="{!$ObjectType.Product2.fields.ProductCode.label}"   style="color:#000000;" /></apex:outputPanel></apex:facet></apex:column><apex:column id="column3"   style="color:#000000;text-align:center;vertical-align:middle;" rendered="{!$ObjectType.Product2.fields.Family.accessible}">
+<apex:outputPanel styleclass="fieldwrapper " style="color:#000000;font-size:1.0em;font-weight:Normal;" >
+<apex:outputField id="outputField3"     value="{!item.record.Family}" />
+</apex:outputPanel>
+<apex:facet name="header"   >
+<apex:outputPanel layout="inline"   style="text-align:center;display:block;" >
+<apex:outputText value="{!$ObjectType.Product2.fields.Family.label}"   style="color:#000000;" /></apex:outputPanel></apex:facet></apex:column><apex:column id="column4"   style="color:#000000;text-align:center;vertical-align:middle;" rendered="{!$ObjectType.Product2.fields.IsActive.accessible}">
+<apex:outputPanel styleclass="fieldwrapper " style="color:#000000;font-size:1.0em;font-weight:Normal;" >
+<apex:outputField id="outputField4"     value="{!item.record.IsActive}" />
+<apex:outputText style="display:none;" value="{!item.record.IsActive}" />
+</apex:outputPanel>
+<apex:facet name="header"   >
+<apex:outputPanel layout="inline"   style="text-align:center;display:block;" >
+<apex:outputText value="{!$ObjectType.Product2.fields.IsActive.label}"   style="color:#000000;" /></apex:outputPanel></apex:facet></apex:column></apex:pageBlockTable><script type="text/javascript">
+if(jQuery("table[id$='dataTableSet1_table'] tbody tr").length > 0){
+        setSort("dataTableSet1_table" ,  1 , {headers: { 0:{sorter: false}, 1:{sorter: "text"}, 2:{sorter: "text"}, 3:{sorter: "text"}, 4:{sorter: "text"}}} );
+        setPageing("dataTableSet1_table", "pager4", 10 , 1);
+}
+</script>
+</apex:outputPanel><apex:inputTextArea id="dataTableSet1_hiddenValue" value="{!dataTableSet1.hiddenValue}" style="display:none;"></apex:inputTextArea>
+<apex:commandButton action="{!dataTableSet1.importByJSON}" id="dataTableSet1_importByJSON" style="display:none;" reRender="dataTableSet1"/>
+<script type="text/javascript">
+
+</script>
+	</apex:actionRegion>
+</apex:outputPanel></apex:pageBlock>
+</apex:outputPanel></apex:form>
+</apex:outputPanel>
+</apex:page>
